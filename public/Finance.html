@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Literacy & Investments | Graphit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0B0C10;
+            --s1: #13141A;
+            --s2: #1C1D26;
+            --s3: #252633;
+            --acc: #7A001E; /* School Maroon */
+            --acc2: #B8284A; /* Brighter Maroon */
+            --red-led: #FF1A4D; /* LED Red */
+            --gold: #F5A623; /* Cyber Gold for financial assets */
+            --green: #3DD68C; /* Profit green */
+            --tx: #E8E8F0;
+            --tx2: #8A8A9E;
+            --tx3: #8E8EAA;
+            --fn: 'DM Sans', sans-serif;
+            --mo: 'DM Mono', monospace;
+            --r: 16px;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--tx);
+            font-family: var(--fn);
+            line-height: 1.6;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 26, 77, 0.08) 0%, transparent 80%);
+        }
+        .container {
+            width: 100%;
+            max-width: 840px;
+            background: var(--s1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--r);
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--tx);
+        }
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: var(--acc);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid var(--acc2);
+            box-shadow: 0 0 8px rgba(122, 0, 30, 0.4);
+        }
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .logo-text em {
+            color: var(--acc2);
+            font-style: normal;
+        }
+        .back-btn {
+            font-size: 13px;
+            color: var(--tx);
+            text-decoration: none;
+            background: var(--acc);
+            border: 1px solid var(--acc2);
+            padding: 6px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 0 8px rgba(122, 0, 30, 0.4);
+        }
+        .back-btn:hover {
+            box-shadow: 0 0 16px rgba(122, 0, 30, 0.75);
+            background: var(--acc2);
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            color: #fff;
+            text-align: center;
+        }
+        .intro {
+            font-size: 14.5px;
+            color: var(--tx2);
+            margin-bottom: 35px;
+            font-weight: 300;
+            text-align: center;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Interactive Grid Layout */
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        @media(min-width: 720px) {
+            .workspace {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        /* Interactive Grid Card */
+        .grid-panel {
+            background: var(--s2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--r);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .grid-title {
+            font-size: 13px;
+            font-family: var(--mo);
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            align-self: flex-start;
+        }
+        .canvas-container {
+            width: 320px;
+            height: 320px;
+            position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            cursor: crosshair;
+            overflow: hidden;
+        }
+        .canvas-container svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Stats HUD Panel */
+        .hud-panel {
+            background: var(--s2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--r);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .hud-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .hud-row:last-of-type {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .hud-label {
+            font-size: 12px;
+            font-family: var(--mo);
+            color: var(--tx3);
+            text-transform: uppercase;
+        }
+        .hud-val {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            font-family: var(--mo);
+        }
+        .hud-val.highlight {
+            color: var(--gold);
+            text-shadow: 0 0 8px rgba(245, 166, 35, 0.3);
+        }
+        .hud-val.green {
+            color: var(--green);
+            text-shadow: 0 0 8px rgba(61, 214, 140, 0.3);
+        }
+        .hud-desc-card {
+            background: rgba(0,0,0,0.25);
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 3px solid var(--gold);
+            margin-top: 15px;
+        }
+        .hud-desc-title {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .hud-desc-body {
+            font-size: 12.5px;
+            color: var(--tx2);
+            line-height: 1.5;
+        }
+
+        /* Information Sections */
+        .info-section {
+            margin-bottom: 35px;
+        }
+        h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 8px;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media(min-width: 600px) {
+            .cards-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .info-card {
+            background: var(--s2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s;
+        }
+        .info-card:hover {
+            border-color: rgba(255, 26, 77, 0.2);
+            box-shadow: 0 0 15px rgba(255, 26, 77, 0.05);
+        }
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .info-card-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: rgba(255, 26, 77, 0.1);
+            color: var(--red-led);
+            font-family: var(--mo);
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 26, 77, 0.25);
+        }
+        .info-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .info-card-desc {
+            font-size: 13px;
+            color: var(--tx2);
+            line-height: 1.6;
+        }
+        .info-card-formula {
+            font-family: var(--mo);
+            font-size: 11.5px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 6px 10px;
+            border-radius: 6px;
+            color: var(--tx3);
+            margin-top: 12px;
+            border: 1px solid rgba(255,255,255,0.03);
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="logo">
+                <div class="logo-mark">G</div>
+                <div class="logo-text">graph<em>it</em></div>
+            </a>
+            <a href="index.html" class="back-btn">← Back to Lab</a>
+        </div>
+
+        <h1>Financial Literacy & Investment Matrix</h1>
+        <p class="intro">Discover how fundamental coordinate geometry, linear slopes, equation systems, and vertices govern risk curves, option grids, and financial literacy.</p>
+
+        <!-- Interactive Workspace -->
+        <div class="workspace">
+            <!-- Draggable Interactive Grid -->
+            <div class="grid-panel">
+                <div class="grid-title">📊 Draggable Sharpe Ratio Matrix</div>
+                <div class="canvas-container" id="canvasContainer">
+                    <svg viewBox="0 0 100 100" id="matrixSvg">
+                        <!-- Grid Lines -->
+                        <line x1="20" y1="0" x2="20" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="0.5" />
+                        <line x1="40" y1="0" x2="40" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="0.5" />
+                        <line x1="60" y1="0" x2="60" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="0.5" />
+                        <line x1="80" y1="0" x2="80" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="0.5" />
+                        <line x1="0" y1="20" x2="100" y2="20" stroke="rgba(255,255,255,0.05)" stroke-width="0.5" />
+                        <line x1="0" y1="40" x2="100" y2="40" stroke="rgba(255,255,255,0.05)" stroke-width="0.5" />
+                        <line x1="0" y1="60" x2="100" y2="60" stroke="rgba(255,255,255,0.05)" stroke-width="0.5" />
+                        <line x1="0" y1="80" x2="100" y2="80" stroke="rgba(255,255,255,0.05)" stroke-width="0.5" />
+                        
+                        <!-- Core Axes (origin centered at middle 50, 50) -->
+                        <line x1="50" y1="0" x2="50" y2="100" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+                        <line x1="0" y1="50" x2="100" y2="50" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+                        
+                        <!-- Axis Labels -->
+                        <text x="92" y="47" fill="var(--tx3)" font-size="3.5" font-family="var(--mo)">Risk</text>
+                        <text x="52" y="7" fill="var(--tx3)" font-size="3.5" font-family="var(--mo)">Return</text>
+
+                        <!-- Efficient Frontier Curve (SVG Path representing parabola) -->
+                        <path d="M 50,70 Q 65,30 90,20" fill="none" stroke="rgba(255,26,77,0.3)" stroke-width="1.5" stroke-dasharray="2,2" />
+                        <text x="75" y="27" fill="var(--red-led)" opacity="0.6" font-size="3" font-family="var(--fn)" transform="rotate(-15 75 27)">Efficient Frontier</text>
+
+                        <!-- Minimum Variance Vertex Dot -->
+                        <circle cx="50" cy="70" r="1.5" fill="var(--red-led)" />
+                        
+                        <!-- Sharpe Capital Allocation Line -->
+                        <line x1="50" y1="50" x2="90" y2="10" stroke="var(--gold)" stroke-width="0.8" stroke-dasharray="3,3" id="calLine" />
+
+                        <!-- Draggable Asset point -->
+                        <circle cx="70" cy="30" r="3" fill="var(--gold)" id="draggableDot" style="cursor: grab;" />
+                        <circle cx="70" cy="30" r="6" fill="none" stroke="var(--gold)" stroke-width="0.5" id="dotPulse" opacity="0.8" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Stats HUD Panel -->
+            <div class="hud-panel">
+                <div>
+                    <h3 style="font-size:15px;color:#fff;margin-bottom:15px;font-family:var(--mo);">Investment Metrics HUD</h3>
+                    
+                    <div class="hud-row">
+                        <span class="hud-label">Risk Coordinate (X)</span>
+                        <span class="hud-val" id="riskCoord">2.00%</span>
+                    </div>
+                    <div class="hud-row">
+                        <span class="hud-label">Return Coordinate (Y)</span>
+                        <span class="hud-val" id="returnCoord">4.00%</span>
+                    </div>
+                    <div class="hud-row">
+                        <span class="hud-label">Risk-Free Rate (Rf)</span>
+                        <span class="hud-val" style="color:var(--tx3)">2.00%</span>
+                    </div>
+                    <div class="hud-row">
+                        <span class="hud-label">Sharpe Ratio</span>
+                        <span class="hud-val green" id="sharpeVal">1.00</span>
+                    </div>
+                </div>
+
+                <div class="hud-desc-card" id="assetDescriptor">
+                    <div class="hud-desc-title" id="assetTitle">Quadrant I: Growth Asset</div>
+                    <div class="hud-desc-body" id="assetBody">
+                        Mapping coordinate (2.00, 4.00) places the asset in a high-growth category. Sharpe ratio indicates sub-optimal performance relative to risk. Drag the golden node on the coordinate plane to simulate other asset environments.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Section -->
+        <div class="info-section">
+            <h2>The Mathematics of Financial Literacy</h2>
+            <div class="cards-grid">
+                <!-- Time & Price -->
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <div class="info-card-num">1</div>
+                        <div class="info-card-title">Coordinate Plotting (Price vs Time)</div>
+                    </div>
+                    <p class="info-card-desc">
+                        Every stock ticker, bond yield chart, and option chain sits on a Cartesian grid. The x-axis tracks chronological intervals while the y-axis tracks price or asset valuations. Plotting coordinates makes abstract fluctuations a legible trajectory.
+                    </p>
+                    <div class="info-card-formula">Coordinate: (Time, Valuation)</div>
+                </div>
+
+                <!-- Linear Volatility -->
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <div class="info-card-num">2</div>
+                        <div class="info-card-title">Linear Equations & Asset Beta</div>
+                    </div>
+                    <p class="info-card-desc">
+                        The slope of a linear function represents the asset's rate of accumulation. In risk analysis, mapping a stock's excess returns against market benchmarks derives a linear slope representing <strong>Beta (β)</strong>—a coefficient tracking how violently an asset swings relative to general market fluctuations.
+                    </p>
+                    <div class="info-card-formula">Formula: y = βx + α</div>
+                </div>
+
+                <!-- Breakeven Systems -->
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <div class="info-card-num">3</div>
+                        <div class="info-card-title">Systems of Equations (Breakeven)</div>
+                    </div>
+                    <p class="info-card-desc">
+                        A system of equations reveals crossovers. In financial modeling, intersecting the cost function and the revenue function solves the system. The intersection coordinate $(x, y)$ shows the breakeven output threshold ($x$) and minimum capital threshold ($y$) where profitability begins.
+                    </p>
+                    <div class="info-card-formula">Crossover: Cost(x) = Revenue(x)</div>
+                </div>
+
+                <!-- Efficient Frontier -->
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <div class="info-card-num">4</div>
+                        <div class="info-card-title">Vertices & Efficient Frontiers</div>
+                    </div>
+                    <p class="info-card-desc">
+                        In Modern Portfolio Theory, risk and return form a parabolic hyperbola called the <em>Efficient Frontier</em>. The minimum variance portfolio sits exactly at the **vertex** of the curve. Calculating this vertex tells fund managers how to allocate assets to achieve the lowest possible risk.
+                    </p>
+                    <div class="info-card-formula">Vertex of Curve: x = -b / (2a)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('canvasContainer');
+        const svg = document.getElementById('matrixSvg');
+        const dot = document.getElementById('draggableDot');
+        const pulse = document.getElementById('dotPulse');
+        const calLine = document.getElementById('calLine');
+
+        const labelX = document.getElementById('riskCoord');
+        const labelY = document.getElementById('returnCoord');
+        const labelSharpe = document.getElementById('sharpeVal');
+
+        const descTitle = document.getElementById('assetTitle');
+        const descBody = document.getElementById('assetBody');
+
+        // Draggable Logic
+        let isDragging = false;
+
+        function updateSimulation(svgX, svgY) {
+            // Constrain SVG coords (0 to 100)
+            svgX = Math.max(0, Math.min(100, svgX));
+            svgY = Math.max(0, Math.min(100, svgY));
+
+            // Position elements
+            dot.setAttribute('cx', svgX);
+            dot.setAttribute('cy', svgY);
+            pulse.setAttribute('cx', svgX);
+            pulse.setAttribute('cy', svgY);
+
+            // Connect CAL line from origin (50, 50) to the point
+            calLine.setAttribute('x2', svgX);
+            calLine.setAttribute('y2', svgY);
+
+            // Map SVG Coordinates to Financial Values
+            // x-axis (Risk): 50 is 0, 100 is 10%, 0 is -10% (simulated)
+            // But we focus on positive risk (50 to 100) -> 0 to 10% risk
+            let risk = (svgX - 50) / 5; // -10% to 10%
+            // y-axis (Return): 50 is 0, 0 is +10% return (inverted SVG coordinate space!), 100 is -10% return
+            let returns = (50 - svgY) / 5; // -10% to 10%
+
+            labelX.textContent = `${risk.toFixed(2)}%`;
+            labelY.textContent = `${returns.toFixed(2)}%`;
+
+            // Calculate Sharpe Ratio = (Return - Rf) / Risk
+            // Let Rf = 2.0%
+            const Rf = 2.0;
+            let sharpe = 0;
+            if (risk > 0) {
+                sharpe = (returns - Rf) / risk;
+            } else if (risk < 0) {
+                // negative risk doesn't make financial sense, invert or bound
+                sharpe = (returns - Rf) / Math.abs(risk);
+            } else {
+                sharpe = returns >= Rf ? Infinity : -Infinity;
+            }
+
+            if (isFinite(sharpe)) {
+                labelSharpe.textContent = sharpe.toFixed(2);
+                if (sharpe >= 2.0) {
+                    labelSharpe.className = "hud-val green";
+                } else if (sharpe >= 1.0) {
+                    labelSharpe.className = "hud-val";
+                } else {
+                    labelSharpe.className = "hud-val";
+                    labelSharpe.style.color = "var(--red-led)";
+                }
+            } else {
+                labelSharpe.textContent = sharpe > 0 ? "∞ (Risk-Free Profit)" : "-∞ (Sure Loss)";
+                labelSharpe.className = "hud-val";
+            }
+
+            // Determine Quadrant and Descriptor
+            let title = "";
+            let body = "";
+
+            if (risk >= 0 && returns >= 0) {
+                // Quadrant I in finance (upper-right relative to 50,50)
+                if (returns > Rf) {
+                    if (sharpe >= 1.5) {
+                        title = "🚀 Quadrant I: Optimal Growth Asset";
+                        body = `Coordinate (${risk.toFixed(2)}%, ${returns.toFixed(2)}%) represents an excellent risk-adjusted growth position. The Sharpe Ratio of ${sharpe.toFixed(2)} demonstrates robust performance, heavily outperforming the 2.0% risk-free rate relative to its volatility. Ideal for equity funds.`;
+                    } else {
+                        title = "📈 Quadrant I: Speculative Volatile Asset";
+                        body = `Coordinate (${risk.toFixed(2)}%, ${returns.toFixed(2)}%) marks an asset with gains that exceed the risk-free rate, but carries excessive volatility. The Sharpe Ratio is sub-optimal (${sharpe.toFixed(2)}). Consider diversifying to smooth the trend slope.`;
+                    }
+                } else {
+                    title = "📉 Quadrant I: Sub-Optimal Safe Asset";
+                    body = `Coordinate (${risk.toFixed(2)}%, ${returns.toFixed(2)}%) yields positive returns, but fails to beat the risk-free rate (2.0%). You are taking volatility risk for a return you could easily beat with standard government treasury bills.`;
+                }
+            } else if (risk < 0 && returns >= 0) {
+                // Quadrant II (Upper-Left) - Market Anomalies
+                title = "⚡ Quadrant II: Arbitrage / Market Inefficiency";
+                body = `Positioned at (${risk.toFixed(2)}%, ${returns.toFixed(2)}%), this coordinate represents positive returns with negative beta sensitivity. In financial markets, this indicates market inefficiencies, hedging plays, or pure arbitrage where volatility yields returns counter to market directions.`;
+            } else if (risk < 0 && returns < 0) {
+                // Quadrant III (Lower-Left) - Deficit Hedge
+                title = "🔒 Quadrant III: Capital Deficit Hedge";
+                body = `Plotted at (${risk.toFixed(2)}%, ${returns.toFixed(2)}%), this zone maps negative expected returns and negative market correlation. These positions are typically taken during severe recessions or options hedging when you pay a premium (assured loss) to protect capital.`;
+            } else {
+                // Quadrant IV (Lower-Right) - Deficit Asset
+                title = "⚠️ Quadrant IV: Wealth Destroyer";
+                body = `Coordinate (${risk.toFixed(2)}%, ${returns.toFixed(2)}%) represents negative returns with positive market risk. An investment here incurs volatility while actively destroying capital. Sharpe ratio is deeply negative. Immediately exit this position.`;
+            }
+
+            descTitle.textContent = title;
+            descBody.textContent = body;
+        }
+
+        function getMouseSvgCoords(e) {
+            const rect = svg.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            return { x, y };
+        }
+
+        // Mouse Events
+        dot.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            dot.style.cursor = 'grabbing';
+            e.preventDefault();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const coords = getMouseSvgCoords(e);
+            updateSimulation(coords.x, coords.y);
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                dot.style.cursor = 'grab';
+            }
+        });
+
+        // Touch Events
+        dot.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            e.preventDefault();
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const touch = e.touches[0];
+            const coords = getMouseSvgCoords(touch);
+            updateSimulation(coords.x, coords.y);
+        });
+
+        window.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Click anywhere to move point
+        svg.addEventListener('click', (e) => {
+            if (e.target === dot) return; // handled by drag
+            const coords = getMouseSvgCoords(e);
+            updateSimulation(coords.x, coords.y);
+        });
+
+        // Initialize at (70, 30) => Risk 4%, Return 4%
+        updateSimulation(70, 30);
+    </script>
+</body>
+</html>
