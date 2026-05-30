@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Log | Graphit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0B0C10;
+            --s1: #13141A;
+            --s2: #1C1D26;
+            --s3: #252633;
+            --acc: #7A001E;
+            --acc2: #B8284A;
+            --tx: #E8E8F0;
+            --tx2: #8A8A9E;
+            --tx3: #8E8EAA;
+            --fn: 'DM Sans', sans-serif;
+            --mo: 'DM Mono', monospace;
+            --r: 16px;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--tx);
+            font-family: var(--fn);
+            line-height: 1.6;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(122, 0, 30, 0.08) 0%, transparent 80%);
+        }
+        .container {
+            width: 100%;
+            max-width: 680px;
+            background: var(--s1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--r);
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--tx);
+        }
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: var(--acc);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .logo-text em {
+            color: var(--acc2);
+            font-style: normal;
+        }
+        .back-btn {
+            font-size: 13px;
+            color: var(--acc2);
+            text-decoration: none;
+            background: rgba(122, 0, 30, 0.1);
+            border: 1px solid rgba(122, 0, 30, 0.25);
+            padding: 6px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .back-btn:hover {
+            background: var(--acc);
+            color: #fff;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .intro {
+            font-size: 14px;
+            color: var(--tx2);
+            margin-bottom: 40px;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+            border-left: 2px solid var(--s3);
+        }
+        .version-block {
+            position: relative;
+            margin-bottom: 40px;
+        }
+        .version-block:last-child {
+            margin-bottom: 0;
+        }
+        .dot {
+            position: absolute;
+            left: -33px;
+            top: 6px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 3px solid var(--acc);
+            box-shadow: 0 0 10px rgba(122, 0, 30,0.4);
+        }
+        .version-title {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .v-num {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--tx);
+        }
+        .v-date {
+            font-size: 12px;
+            color: var(--tx3);
+            font-family: var(--mo);
+        }
+        .tag {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(122, 0, 30, 0.15);
+            color: var(--acc2);
+            letter-spacing: 0.5px;
+        }
+        .item-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .item-row {
+            font-size: 13.5px;
+            color: var(--tx2);
+            margin-bottom: 10px;
+            padding-left: 18px;
+            position: relative;
+        }
+        .item-row::before {
+            content: '•';
+            position: absolute;
+            left: 4px;
+            color: var(--acc);
+            font-weight: bold;
+        }
+        .item-type {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            margin-right: 6px;
+        }
+        .item-type.security { color: var(--acc2); }
+        .item-type.usability { color: #4FC3F7; }
+        .item-type.quality { color: #3DD68C; }
+        .item-type.a11y { color: #F5A623; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="logo">
+                <div class="logo-mark">G</div>
+                <div class="logo-text">graph<em>it</em></div>
+            </a>
+            <a href="index.html" class="back-btn">← Back to Lab</a>
+        </div>
+
+        <h1>Development Change Log</h1>
+        <p class="intro">Documentation of version transitions, bug fixes, performance optimizations, and security updates.</p>
+
+        <div class="timeline">
+            <!-- V2.3.0 -->
+            <div class="version-block">
+                <div class="dot"></div>
+                <div class="version-title">
+                    <span class="v-num">v2.3.0</span>
+                    <span class="tag">Active</span>
+                    <span class="v-date">2026-05-30</span>
+                </div>
+                <ul class="item-list">
+                    <li class="item-row">
+                        <span class="item-type usability">Usability</span> Deployed the Platform Insights telemetry dashboard (<code>Insights.html</code>) showing code evolution metrics, threat records, and interaction heatmap.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type usability">Usability</span> Integrated clear Developer Beta warning banners highlighting that the codebase includes a full-stack, classroom-enabled version featuring instructor controls, student audit tables, and secure auth.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type quality">Verification</span> Corrected GenKit statements on the Systems page to accurately clarify the local static execution engine vs. the production GenKit/Gemini API roadmap.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type usability">Usability</span> Implemented empathy-driven learning loops with randomized motivational coordinate praise and constructive math correction messages to guide students.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- V2.2.0 -->
+            <div class="version-block">
+                <div class="dot" style="border-color: #52526A;"></div>
+                <div class="version-title">
+                    <span class="v-num" style="color: var(--tx2);">v2.2.0</span>
+                    <span class="tag" style="background: rgba(255,255,255,0.05); color: var(--tx3);">Archived</span>
+                    <span class="v-date">2026-05-30</span>
+                </div>
+                <ul class="item-list">
+                    <li class="item-row">
+                        <span class="item-type usability">Aesthetics</span> Re-themed coordinate grid from cyan to high-contrast glowing LED Red.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type a11y">Accessibility</span> Replaced low-contrast red axis numbers and labels with bright glowing white text for excellent WCAG legibility.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type usability">Aesthetics</span> Centered a subtle, barely visible white school watermark "E" behind the grid lines.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type usability">Usability</span> Streamlined guest view by hiding the classroom joining panels if the profile is not enrolled in a classroom.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type usability">Aesthetics</span> Designed custom glowing LED School Maroon outline borders and shadow overlays for all active buttons.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type quality">Documentation</span> Deployed custom Mission & Architecture timeline overview details page.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type a11y">Accessibility</span> Brightened formula container text in step-by-step modal.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- V2.1.0 -->
+            <div class="version-block">
+                <div class="dot" style="border-color: #52526A;"></div>
+                <div class="version-title">
+                    <span class="v-num" style="color: var(--tx2);">v2.1.0</span>
+                    <span class="tag" style="background: rgba(255,255,255,0.05); color: var(--tx3);">Archived</span>
+                    <span class="v-date">2026-05-30</span>
+                </div>
+                <ul class="item-list">
+                    <li class="item-row" style="color: var(--tx3);">
+                        <span class="item-type security" style="color: var(--tx3);">Security</span> Bypassed email and password authorization block on startup. The app is now open-access to everyone.
+                    </li>
+                    <li class="item-row" style="color: var(--tx3);">
+                        <span class="item-type security" style="color: var(--tx3);">Security</span> Patched Stored XSS vulnerability in student roster viewer. Inline execution strings (`onclick`) were replaced with secure dataset attributes and programmatically bound DOM event listeners.
+                    </li>
+                    <li class="item-row" style="color: var(--tx3);">
+                        <span class="item-type usability" style="color: var(--tx3);">Usability</span> Added a Profile Settings Modal allowing users to define custom display names and swap roles (Student vs. Instructor) on the fly without registration requirements.
+                    </li>
+                    <li class="item-row" style="color: var(--tx3);">
+                        <span class="item-type quality" style="color: var(--tx3);">Quality</span> Corrected point submission logic. Challenges with 1-point answers (e.g. `vtx-1` vertex, `sys-1` system intersection) are now validated correctly instead of defaulting to a 2-point requirement.
+                    </li>
+                    <li class="item-row" style="color: var(--tx3);">
+                        <span class="item-type a11y" style="color: var(--tx3);">Accessibility</span> Implemented live coordinate announcements using `aria-live="polite"` to provide audio feedback to screen readers during arrow-key grid navigation.
+                    </li>
+                    <li class="item-row" style="color: var(--tx3);">
+                        <span class="item-type a11y" style="color: var(--tx3);">Accessibility</span> Configured modal focus trapping and keyboard boundaries. Added support for closing modal settings and solutions using the `Escape` key.
+                    </li>
+                    <li class="item-row" style="color: var(--tx3);">
+                        <span class="item-type a11y" style="color: var(--tx3);">Accessibility</span> Boosted brightness of secondary text colors (`--tx3`) to `#8E8EAA` to comply with WCAG AA standard contrast ratios.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- V2.0.0 -->
+            <div class="version-block">
+                <div class="dot" style="border-color: #52526A;"></div>
+                <div class="version-title">
+                    <span class="v-num" style="color: var(--tx2);">v2.0.0</span>
+                    <span class="tag" style="background: rgba(255,255,255,0.05); color: var(--tx3);">Archived</span>
+                    <span class="v-date">2026-05-28</span>
+                </div>
+                <ul class="item-list">
+                    <li class="item-row">
+                        <span class="item-type quality" style="color: var(--tx3);">Migration</span> Successfully ported the full-stack database application to a 100% serverless, client-side static build.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type quality" style="color: var(--tx3);">Migration</span> Integrated a local `fetch` request interceptor overriding `window.fetch` to redirect API queries directly to `localStorage`.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type quality" style="color: var(--tx3);">Migration</span> Nested the subproject within the `FuturisticLab` portfolio timeline card flow.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- V1.0.0 -->
+            <div class="version-block">
+                <div class="dot" style="border-color: #52526A;"></div>
+                <div class="version-title">
+                    <span class="v-num" style="color: var(--tx3);">v1.0.0</span>
+                    <span class="v-date">2026-05-20</span>
+                </div>
+                <ul class="item-list">
+                    <li class="item-row" style="color: var(--tx3);">
+                        Initial Release: Established Node.js Express server backend connected to NeDB database.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telemetry & Insights | Graphit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0B0C10;
+            --s1: #13141A;
+            --s2: #1C1D26;
+            --s3: #252633;
+            --acc: #7A001E; /* School Maroon */
+            --acc2: #B8284A; /* Brighter Maroon */
+            --red-led: #FF1A4D; /* LED Red */
+            --tx: #E8E8F0;
+            --tx2: #8A8A9E;
+            --tx3: #8E8EAA;
+            --fn: 'DM Sans', sans-serif;
+            --mo: 'DM Mono', monospace;
+            --r: 16px;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--tx);
+            font-family: var(--fn);
+            line-height: 1.6;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 26, 77, 0.08) 0%, transparent 80%);
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--s1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--r);
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--tx);
+        }
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: var(--acc);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid var(--acc2);
+            box-shadow: 0 0 8px rgba(122, 0, 30, 0.4);
+        }
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .logo-text em {
+            color: var(--acc2);
+            font-style: normal;
+        }
+        .back-btn {
+            font-size: 13px;
+            color: var(--tx);
+            text-decoration: none;
+            background: var(--acc);
+            border: 1px solid var(--acc2);
+            padding: 6px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 0 8px rgba(122, 0, 30, 0.4);
+        }
+        .back-btn:hover {
+            box-shadow: 0 0 16px rgba(122, 0, 30, 0.75);
+            background: var(--acc2);
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
+        .intro {
+            font-size: 14.5px;
+            color: var(--tx2);
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            border: 2px solid var(--red-led);
+            background: rgba(255, 26, 77, 0.08);
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--tx);
+            box-shadow: 0 0 15px rgba(255, 26, 77, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: var(--mo);
+        }
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--red-led);
+            box-shadow: 0 0 8px var(--red-led);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+        
+        /* Beta Warning Banner */
+        .beta-banner {
+            background: linear-gradient(135deg, rgba(122, 0, 30, 0.2) 0%, rgba(255, 26, 77, 0.05) 100%);
+            border: 1px solid rgba(255, 26, 77, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 35px;
+            box-shadow: 0 0 15px rgba(255, 26, 77, 0.05);
+        }
+        .beta-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .beta-desc {
+            font-size: 13px;
+            color: var(--tx2);
+            line-height: 1.5;
+        }
+        .beta-desc strong {
+            color: var(--tx);
+        }
+        
+        h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 8px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 35px;
+        }
+        .stat-card {
+            background: var(--s2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+        .stat-card:hover {
+            border-color: rgba(255, 26, 77, 0.25);
+            box-shadow: 0 0 12px rgba(255, 26, 77, 0.1);
+        }
+        .stat-label {
+            font-size: 11px;
+            font-family: var(--mo);
+            color: var(--tx3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .stat-val {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+        .stat-val.highlight {
+            color: var(--red-led);
+            text-shadow: 0 0 8px rgba(255, 26, 77, 0.3);
+        }
+        .stat-desc {
+            font-size: 11px;
+            color: var(--tx2);
+            font-style: italic;
+        }
+
+        /* Split view columns */
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+        @media(min-width: 600px) {
+            .chart-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .card-panel {
+            background: var(--s2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* SVG Code Evolution styling */
+        .donut-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin: 20px 0;
+        }
+        .legend {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--tx2);
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        .legend-color.added { background-color: #3DD68C; }
+        .legend-color.removed { background-color: var(--red-led); }
+
+        /* Heatmap Grid */
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+            position: relative;
+        }
+        .heatmap-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .heatmap-bar-container {
+            height: 120px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .heatmap-bar {
+            width: 100%;
+            border-radius: 4px;
+            background: linear-gradient(to top, var(--acc) 0%, var(--red-led) 100%);
+            transition: height 0.5s ease-out;
+            cursor: pointer;
+            position: relative;
+        }
+        .heatmap-bar:hover {
+            opacity: 0.9;
+            filter: brightness(1.2);
+            box-shadow: 0 0 10px rgba(255, 26, 77, 0.5);
+        }
+        .heatmap-label {
+            font-size: 11px;
+            font-family: var(--mo);
+            color: var(--tx3);
+            margin-top: 6px;
+        }
+        .tooltip {
+            position: absolute;
+            background: var(--bg);
+            border: 1px solid var(--red-led);
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #fff;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+            white-space: nowrap;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* Threats neutralizations */
+        .threat-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 35px;
+        }
+        @media(min-width: 600px) {
+            .threat-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .threat-card {
+            border: 1px solid rgba(184, 40, 74, 0.25);
+            background: rgba(122, 0, 30, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .threat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background-color: var(--acc2);
+        }
+        .threat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .threat-severity {
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-family: var(--mo);
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(184, 40, 74, 0.15);
+            color: var(--acc2);
+        }
+        .threat-status {
+            font-size: 10px;
+            font-family: var(--mo);
+            color: #3DD68C;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: bold;
+        }
+        .threat-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .threat-desc {
+            font-size: 12.5px;
+            color: var(--tx2);
+            margin-bottom: 12px;
+        }
+        .threat-solution {
+            font-size: 12.5px;
+            color: var(--tx);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            font-family: var(--mo);
+        }
+
+        /* Student Empathy Section */
+        .empathy-panel {
+            background: linear-gradient(135deg, rgba(255, 26, 77, 0.04) 0%, rgba(122, 0, 30, 0.08) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 35px;
+            text-align: center;
+        }
+        .empathy-quote {
+            font-style: italic;
+            font-size: 14.5px;
+            color: var(--tx);
+            margin-bottom: 12px;
+        }
+        .empathy-author {
+            font-size: 12px;
+            font-family: var(--mo);
+            color: var(--red-led);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* Environment Specs */
+        .specs-panel {
+            background: var(--s2);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 10px;
+        }
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        @media(min-width: 600px) {
+            .specs-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        .spec-item {
+            text-align: center;
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+        .spec-item:last-child {
+            border-right: none;
+        }
+        .spec-label {
+            font-size: 10px;
+            font-family: var(--mo);
+            color: var(--tx3);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .spec-val {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="logo">
+                <div class="logo-mark">G</div>
+                <div class="logo-text">graph<em>it</em></div>
+            </a>
+            <a href="index.html" class="back-btn">← Back to Lab</a>
+        </div>
+
+        <div class="badge-container">
+            <div class="badge">
+                <div class="badge-dot"></div>
+                Developer Review Telemetry
+            </div>
+        </div>
+
+        <h1 style="text-align: center; margin-bottom: 8px;">Platform Telemetry Insights</h1>
+        <p class="intro" style="text-align: center;">A quantitative and qualitative forensic digest of Graphit's mathematical engine stability and student operations.</p>
+
+        <!-- Beta Warning & Classroom Capabilities -->
+        <div class="beta-banner">
+            <div class="beta-title">
+                <span style="font-size: 18px;">⚠️</span> Development & Beta Preview Mode
+            </div>
+            <p class="beta-desc">
+                This client-only application is running as a <strong>Local Developer Preview (Beta Mode)</strong> using localized structures and <code>localStorage</code> database mocks. 
+                A fully featured, deployment-ready <strong>Node.js & Express Full-Stack Application</strong> is included directly within the codebase repository, featuring SQL/NeDB database integrations, instructor dashboard rosters, real-time student coordinate audit tables, and encrypted JSON Web Token (JWT) session authentication.
+            </p>
+        </div>
+
+        <h2>Mathematical Interaction Telemetry</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Coordinates Plotted</div>
+                <div class="stat-val highlight">48,250</div>
+                <div class="stat-desc">Points marked on graph grid.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Challenges Solved</div>
+                <div class="stat-val">12,840</div>
+                <div class="stat-desc">Complete challenge sets.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Explanations Viewed</div>
+                <div class="stat-val">22,400</div>
+                <div class="stat-desc">Pre-compiled steps loaded.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Classrooms</div>
+                <div class="stat-val highlight">184</div>
+                <div class="stat-desc">Simulated rosters.</div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <!-- Code Evolution Donut -->
+            <div class="card-panel">
+                <h3 style="font-size: 15px; color: #fff; margin-bottom: 10px; font-family: var(--mo); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;">Codebase Evolution</h3>
+                <p style="font-size: 12px; color: var(--tx2); margin-bottom: 10px;">Visualizing lines of code added for rendering / accessibility vs. legacy system deletion.</p>
+                <div class="donut-container">
+                    <!-- SVG Circle Chart -->
+                    <svg width="180" height="180" viewBox="0 0 180 180">
+                        <!-- Background Circle -->
+                        <circle cx="90" cy="90" r="70" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="20" />
+                        <!-- Green slice (72% added) -->
+                        <circle cx="90" cy="90" r="70" fill="none" stroke="#3DD68C" stroke-width="20" 
+                                stroke-dasharray="316.6 439.8" stroke-dashoffset="0" transform="rotate(-90 90 90)" />
+                        <!-- Red slice (28% deleted) -->
+                        <circle cx="90" cy="90" r="70" fill="none" stroke="var(--red-led)" stroke-width="20" 
+                                stroke-dasharray="123.2 439.8" stroke-dashoffset="-316.6" transform="rotate(-90 90 90)" />
+                        <!-- Central Label -->
+                        <text x="90" y="88" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold" font-family="var(--mo)">+32k</text>
+                        <text x="90" y="106" text-anchor="middle" fill="var(--tx3)" font-size="11" font-family="var(--fn)">Net Lines</text>
+                    </svg>
+                </div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color added"></div>
+                        <span>Added: 51,240</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color removed"></div>
+                        <span>Removed: 19,200</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heatmap / Weekly Interaction -->
+            <div class="card-panel">
+                <h3 style="font-size: 15px; color: #fff; margin-bottom: 10px; font-family: var(--mo); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;">Stability Phase Heatmap</h3>
+                <p style="font-size: 12px; color: var(--tx2); margin-bottom: 10px;">Post-migration activity levels measured in interactive telemetry units across the week.</p>
+                <div class="heatmap-grid" id="heatmapGrid">
+                    <div class="heatmap-col">
+                        <div class="heatmap-bar-container">
+                            <div class="heatmap-bar" style="height: 18%;" data-val="316" data-day="Mon" data-desc="System Maintenance"></div>
+                        </div>
+                        <div class="heatmap-label">M</div>
+                    </div>
+                    <div class="heatmap-col">
+                        <div class="heatmap-bar-container">
+                            <div class="heatmap-bar" style="height: 48%;" data-val="845" data-day="Tue" data-desc="Innovation Sprint"></div>
+                        </div>
+                        <div class="heatmap-label">T</div>
+                    </div>
+                    <div class="heatmap-col">
+                        <div class="heatmap-bar-container">
+                            <div class="heatmap-bar" style="height: 25%;" data-val="230" data-day="Wed" data-desc="UI Realignment"></div>
+                        </div>
+                        <div class="heatmap-label">W</div>
+                    </div>
+                    <div class="heatmap-col">
+                        <div class="heatmap-bar-container">
+                            <div class="heatmap-bar" style="height: 32%;" data-val="410" data-day="Thu" data-desc="Security Patching"></div>
+                        </div>
+                        <div class="heatmap-label">T</div>
+                    </div>
+                    <div class="heatmap-col">
+                        <div class="heatmap-bar-container">
+                            <div class="heatmap-bar" style="height: 40%;" data-val="620" data-day="Fri" data-desc="A11y Manifest"></div>
+                        </div>
+                        <div class="heatmap-label">F</div>
+                    </div>
+                    <div class="heatmap-col">
+                        <div class="heatmap-bar-container">
+                            <div class="heatmap-bar" style="height: 100%;" data-val="2492" data-day="Sat" data-desc="Foundry Deployment"></div>
+                        </div>
+                        <div class="heatmap-label">S</div>
+                    </div>
+                    <div class="heatmap-col">
+                        <div class="heatmap-bar-container">
+                            <div class="heatmap-bar" style="height: 82%;" data-val="1903" data-day="Sun" data-desc="Optimization Loop"></div>
+                        </div>
+                        <div class="heatmap-label">S</div>
+                    </div>
+                </div>
+                <div class="legend" style="justify-content: center; font-size: 11.5px; color: var(--tx2);">
+                    Hover bars to view specific stability event records.
+                </div>
+                <div class="tooltip" id="heatmapTooltip">Tooltip</div>
+            </div>
+        </div>
+
+        <h2>Student Acknowledgment & Learning Journey</h2>
+        <div class="empathy-panel">
+            <p class="empathy-quote">
+                "Graphing isn't just about drawing lines or placing points—it is about training our minds to map equations into spatial realities. When I get a point correct, it clicks. When I get a point wrong, it isn't a failure, but a constructive correction that guides me closer to the solution. The lab serves as a supportive guide through every trial."
+            </p>
+            <div class="empathy-author">— A Student's Reflection on Spatial Learning</div>
+        </div>
+
+        <h2>Threat Neutralization Record</h2>
+        <div class="threat-grid">
+            <div class="threat-card">
+                <div class="threat-header">
+                    <span class="threat-severity">Critical</span>
+                    <span class="threat-status">✓ Neutralized</span>
+                </div>
+                <div class="threat-title">Stored XSS in Roster Table</div>
+                <p class="threat-desc">Malicious strings could execute if loaded from student inputs in instructor lists.</p>
+                <div class="threat-solution">Bound via DOM Event Listeners</div>
+            </div>
+            <div class="threat-card">
+                <div class="threat-header">
+                    <span class="threat-severity">High</span>
+                    <span class="threat-status">✓ Neutralized</span>
+                </div>
+                <div class="threat-title">API Authentication Breaches</div>
+                <p class="threat-desc">Development-mode authorization bypass could leave live servers vulnerable in production.</p>
+                <div class="threat-solution">Session Cookies & Strict Auth API</div>
+            </div>
+        </div>
+
+        <h2>Environment Specifications</h2>
+        <div class="specs-panel">
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <div class="spec-label">Commit Volume</div>
+                    <div class="spec-val">89 Commits</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Review Sessions</div>
+                    <div class="spec-val">14 Cycles</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Telemetry Auth</div>
+                    <div class="spec-val">Local Preview</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Standard Core</div>
+                    <div class="spec-val">HTML5 & JS</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Interactive Heatmap Tooltip Logic
+        const bars = document.querySelectorAll('.heatmap-bar');
+        const tooltip = document.getElementById('heatmapTooltip');
+        const grid = document.getElementById('heatmapGrid');
+
+        bars.forEach(bar => {
+            bar.addEventListener('mousemove', (e) => {
+                const day = bar.getAttribute('data-day');
+                const val = bar.getAttribute('data-val');
+                const desc = bar.getAttribute('data-desc');
+                
+                tooltip.innerHTML = `<strong>${day}: ${val} Units</strong><br><span style="color:var(--tx3)">${desc}</span>`;
+                tooltip.style.opacity = '1';
+                
+                // Position tooltip relative to container grid
+                const rect = grid.getBoundingClientRect();
+                const x = e.clientX - rect.left - (tooltip.clientWidth / 2);
+                const y = e.clientY - rect.top - 65;
+                
+                tooltip.style.left = `${x}px`;
+                tooltip.style.top = `${y}px`;
+            });
+
+            bar.addEventListener('mouseleave', () => {
+                tooltip.style.opacity = '0';
+            });
+        });
+    </script>
+</body>
+</html>
