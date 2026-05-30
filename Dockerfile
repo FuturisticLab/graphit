@@ -32,7 +32,7 @@ COPY --from=builder /app/validator.js ./
 COPY --from=builder /app/crypto.js ./
 COPY --from=builder /app/audit.js ./
 COPY --from=builder /app/Models ./Models
-COPY --from=builder /app/public ./public
+COPY --from=builder /app/docs ./docs
 COPY --from=builder /app/data ./data
 COPY --from=builder /app/.env ./
 

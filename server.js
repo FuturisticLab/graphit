@@ -56,7 +56,7 @@ app.use(helmet({
 app.use(cors({ origin: process.env.CLIENT_ORIGIN || true, credentials: true }));
 app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'docs')));
 
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10, message: { error: 'Too many attempts. Wait 15 minutes.' } });
 const apiLimiter = rateLimit({ windowMs: 60 * 1000, max: 180, message: { error: 'Too many requests.' } });
@@ -354,7 +354,7 @@ app.get('/health', (req, res) => {
     });
 });
 
-app.get('/{*path}', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('/{*path}', (req, res) => res.sendFile(path.join(__dirname, 'docs', 'index.html')));
 app.listen(PORT, () => console.log(`\n  Graphit → http://localhost:${PORT}\n`));
 
 // ─── ERROR HANDLING MIDDLEWARE ──────────────────────────────────────────────────

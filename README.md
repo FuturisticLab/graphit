@@ -3,8 +3,8 @@
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-blue.svg?style=flat-square&logo=node.js)](https://nodejs.org)
 [![Express Framework](https://img.shields.io/badge/express-v5.x-lightgrey.svg?style=flat-square&logo=express)](https://expressjs.com)
 [![License: ISC](https://img.shields.io/badge/License-ISC-yellow.svg?style=flat-square)](https://opensource.org/licenses/ISC)
-[![WCAG Accessibility](https://img.shields.io/badge/WCAG-AA_Compliant-green.svg?style=flat-square&logo=accessibility)](public/Accessibility.html)
-[![Security Rating](https://img.shields.io/badge/Security-Helmet_Hardened-red.svg?style=flat-square&logo=securityscorecard)](public/Insights.html)
+[![WCAG Accessibility](https://img.shields.io/badge/WCAG-AA_Compliant-green.svg?style=flat-square&logo=accessibility)](docs/Accessibility.html)
+[![Security Rating](https://img.shields.io/badge/Security-Helmet_Hardened-red.svg?style=flat-square&logo=securityscorecard)](docs/Insights.html)
 
 **Graphit** is a highly accessible, production-grade algebra graphing and coordinate simulation platform. Built for modern classrooms, it features dual-mode execution (Express full-stack backend vs. serverless browser memory fallback), real-time progress tracking, secure authentication, and step-by-step mathematical explanations.
 
@@ -44,7 +44,7 @@ graphit/
 ├── .gitignore             # Git exclusion directives (node_modules, .env, data/, logs/)
 ├── package.json           # Node configuration and script definitions
 │
-├── public/                # SPA Frontend Files (Static Hub assets)
+├── docs/                  # SPA Frontend Files (Static Hub assets)
 │   ├── index.html         # Lab workspace HTML interface
 │   ├── app.js             # Canvas renderer, state toggles, and interceptor fallbacks
 │   ├── app.css            # Cyber-Red LED & Maroon theme sheets (WCAG AAA contrast)
