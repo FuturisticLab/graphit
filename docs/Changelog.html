@@ -202,17 +202,53 @@
         <p class="intro">Documentation of version transitions, bug fixes, performance optimizations, and security updates.</p>
 
         <div class="timeline">
-            <!-- V2.4.0 -->
+            <!-- V2.5.0 -->
             <div class="version-block">
                 <div class="dot"></div>
                 <div class="version-title">
-                    <span class="v-num">v2.4.0</span>
+                    <span class="v-num">v2.5.0</span>
                     <span class="tag">Active</span>
                     <span class="v-date">2026-05-30</span>
                 </div>
                 <ul class="item-list">
                     <li class="item-row">
-                        <span class="item-type usability">Usability</span> Deployed the interactive <strong>Financial Literacy & Investments Matrix</strong> (<code>Finance.html</code>) mapping coordinate systems, linear betas, break-even intersections, and Efficient Frontier optimization.
+                        <span class="item-type quality">Fix</span> Resolved silent submit crash on linear function questions — server correctly strips <code>answer</code> from the client payload for security; client now reads <code>result.lineGuide</code> from the submit response instead of attempting to parse the undefined value.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type quality">Fix</span> Test mode now triggers correctly for all users. The "Finish Test" button was a dead branch — <code>finalizeTest()</code> was never called on the last question due to a missing <code>else if</code> in <code>dismissSolutionModal</code>.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type usability">Usability</span> Removed login requirement for Test mode during beta. Guests now receive a fully scored local test session using the practice validation endpoint.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type usability">Layout</span> Transitioned to a full-height two-column SPA layout — controls sidebar left, full canvas right with an inline detail panel for point zoom and solution review. Header removed.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type quality">Fix</span> Done screen, test results screen, and dashboard are now positioned as overlay layers (<code>position:absolute/fixed</code>) so they render correctly without collapsing the flex layout.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type quality">Fix</span> Confirm overlay (point placement popup) is now fully clamped within canvas bounds on all four edges — previously could escape off-screen on line-mode questions, blocking all further interaction.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type usability">Mobile</span> Restructured responsive layout for mobile and narrow screens (&le; 820px) — stacked the canvas and detail panel vertically (column) instead of side-by-side (row), centered the square canvas, and converted layout to flow with the primary page scroll.
+                    </li>
+                    <li class="item-row">
+                        <span class="item-type quality">Fix</span> Canvas resizing now dynamically detects mobile layouts, sizing the canvas by width on narrow viewports to prevent horizontal clipping, and by height on desktop viewports.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- V2.4.0 -->
+            <div class="version-block">
+                <div class="dot" style="border-color: #52526A;"></div>
+                <div class="version-title">
+                    <span class="v-num" style="color: var(--tx2);">v2.4.0</span>
+                    <span class="tag" style="background: rgba(255,255,255,0.05); color: var(--tx3);">Archived</span>
+                    <span class="v-date">2026-05-30</span>
+                </div>
+                <ul class="item-list">
+                    <li class="item-row">
+                        <span class="item-type usability">Usability</span> Deployed the interactive <strong>Financial Literacy &amp; Investments Matrix</strong> (<code>Finance.html</code>) mapping coordinate systems, linear betas, break-even intersections, and Efficient Frontier optimization.
                     </li>
                     <li class="item-row">
                         <span class="item-type usability">Usability</span> Integrated a draggable glassmorphic SVG Sharpe Ratio coordinate plane that calculates risk/return zones in real time.

@@ -660,9 +660,18 @@ function resizeCanvas() {
     const panel = document.getElementById('cvPanel');
     const bar   = panel.querySelector('.cv-bar');
     const barH  = bar ? bar.offsetHeight : 38;
-    // Square canvas — constrained by available HEIGHT so detail panel keeps its width
-    const availH = panel.clientHeight - barH;
-    const size   = Math.max(100, availH);
+    
+    // Dynamic scaling: size by width on mobile, and height on desktop
+    const isMobile = window.innerWidth <= 820;
+    let size = 0;
+    if (isMobile) {
+        size = panel.clientWidth;
+    } else {
+        const availH = panel.clientHeight - barH;
+        size = availH;
+    }
+    size = Math.max(100, size);
+    
     canvas.width  = Math.round(size * DPR); canvas.height = Math.round(size * DPR);
     canvas.style.width  = size + 'px'; canvas.style.height = size + 'px';
     const wrap = document.getElementById('cvWrap');
