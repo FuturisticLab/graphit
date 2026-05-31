@@ -665,7 +665,7 @@ function resizeCanvas() {
     const isMobile = window.innerWidth <= 820;
     let size = 0;
     if (isMobile) {
-        size = panel.clientWidth;
+        size = panel.clientWidth || window.innerWidth;
     } else {
         const availH = panel.clientHeight - barH;
         size = availH;
