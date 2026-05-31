@@ -51,93 +51,172 @@
 
     <!-- MAIN APP -->
     <div class="screen on" id="scrApp">
-        <div class="topbar">
-            <div class="logo"><div class="logo-mk">G</div><div class="logo-tx">graph<em>it</em></div></div>
-            <div class="topbar-mid">
-                <div class="chip" id="scoreChip">Score <span class="v" id="scoreVal">0</span></div>
-                <div class="mode-toggle" id="modeToggle">
-                    <button class="mt-btn on" id="btnPractice">Practice</button>
-                    <button class="mt-btn" id="btnTest">Test</button>
-                </div>
-            </div>
-            <div class="topbar-right">
-                <button class="dash-btn" id="dashToggleBtn" style="display:none">Dashboard</button>
-                <div class="user-chip" id="userChip"><div class="uavatar" id="uAvatar">?</div><span id="uName">Guest</span></div>
-            </div>
-        </div>
 
         <div id="studentView">
             <div class="app-body" id="appBody">
-                <div class="left-col">
-                    <div class="prog-bar" id="progBar"></div>
-                    <div class="cv-panel" id="cvPanel">
-                        <div class="cv-bar">
-                            <div class="cv-left">
-                                <div class="snap-pill"><div class="snap-dot"></div>Snap</div>
-                                <div class="cat-tag" id="catTag">—</div>
-                            </div>
-                            <div style="display:flex;align-items:center;gap:8px;">
-                                <div class="timer-badge" id="timerBadge" style="display:none">—</div>
-                                <div class="coord-box" id="coordBox" aria-live="polite" aria-atomic="true">( — , — )</div>
-                            </div>
+
+                <!-- LEFT SIDEBAR: branding + controls + challenge info -->
+                <div class="left-col" id="leftCol">
+
+                    <!-- Branding & user -->
+                    <div class="sidebar-top">
+                        <div class="logo">
+                            <div class="logo-mk">G</div>
+                            <div class="logo-tx">graph<em>it</em></div>
                         </div>
-                        <canvas id="gc" tabindex="0" aria-label="Interactive coordinate graphing grid. Use arrow keys to navigate and Space or Enter to place a point."></canvas>
-                        <div class="conf-ov" id="confOv">
-                            <div class="conf-coord" id="confCoord">(0,0)</div>
-                            <div class="conf-sub">Place this point?</div>
-                            <div class="conf-btns">
-                                <button class="cb cb-no" id="confNo">Cancel</button>
-                                <button class="cb cb-yes" id="confYes">✓ Place</button>
-                            </div>
+                        <div class="topbar-right">
+                            <button class="dash-btn" id="dashToggleBtn" style="display:none">Dashboard</button>
+                            <div class="user-chip" id="userChip"><div class="uavatar" id="uAvatar">?</div><span id="uName">Guest</span></div>
                         </div>
                     </div>
-                </div>
-                <div class="right-col" id="rightCol">
+
+                    <!-- Score + mode -->
+                    <div class="sidebar-controls">
+                        <div class="chip" id="scoreChip">Score <span class="v" id="scoreVal">0</span></div>
+                        <div class="mode-toggle" id="modeToggle">
+                            <button class="mt-btn on" id="btnPractice">Practice</button>
+                            <button class="mt-btn" id="btnTest">Test</button>
+                        </div>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="prog-bar" id="progBar"></div>
+
+                    <!-- Challenge card -->
                     <div class="card">
                         <div class="ch-meta"><span class="ch-num" id="chNum">1</span><span class="ch-cat" id="chCat">—</span><div class="diff-dots" id="diffDots"></div></div>
                         <div class="ch-text" id="chText">Loading…</div>
                         <div id="hintArea"></div>
                     </div>
+
+                    <!-- Test progress -->
                     <div class="card" id="testProgressCard" style="display:none">
                         <div class="card-hdr"><span class="card-label">Test Progress</span><span class="chip" id="testProgLabel">0 / 0</span></div>
                         <div class="test-progress" id="testProgressDots"></div>
                     </div>
+
+                    <!-- Placed points -->
                     <div class="card">
                         <div class="card-hdr"><span class="card-label">Placed Points</span><span style="font-family:var(--mo);font-size:11px;color:var(--acc2)" id="ptCount">0</span></div>
                         <div class="pt-list" id="ptList"><div class="pt-empty">Click the graph to place a point</div></div>
                     </div>
+
+                    <!-- Actions -->
                     <div class="actions">
                         <button class="btn btn-acc" id="submitBtn">Submit Answer</button>
                         <button class="btn btn-ghost" id="clearBtn">Clear Points</button>
                     </div>
+
                     <div id="resArea"></div>
+
+                    <!-- Explanation -->
                     <div class="exp-panel" id="expPanel">
                         <div class="exp-hdr"><div class="exp-ico">💡</div><div class="exp-title" id="expTitle">Step-by-step solution</div></div>
                         <div class="exp-empty" id="expEmpty">Submit your answer to see the full algebraic solution.</div>
                         <div class="exp-body" id="expBody" style="display:none"></div>
                     </div>
+
+                    <!-- Classroom -->
                     <div class="card" id="classroomCard" style="display:none">
                         <div class="card-hdr"><span class="card-label">My Classroom</span></div>
                         <div id="classroomInfo"></div>
                     </div>
-                    <!-- Footer Info Links -->
-                    <div class="card info-links-card" style="margin-top: auto; padding: 12px 14px; background: transparent; border-color: rgba(255,255,255,0.03); flex-shrink: 0;">
-                        <div style="display: flex; gap: 12px; justify-content: center; font-size: 11px; color: var(--tx3); flex-wrap: wrap;">
-                            <a href="Privacy.html" class="info-link" style="color: var(--tx3); text-decoration: none;">Privacy Policy</a>
+
+                    <!-- Footer links -->
+                    <div class="info-links-card">
+                        <div class="info-links-row">
+                            <a href="Privacy.html" class="info-link">Privacy</a>
                             <span>·</span>
-                            <a href="Accessibility.html" class="info-link" style="color: var(--tx3); text-decoration: none;">Accessibility</a>
+                            <a href="Accessibility.html" class="info-link">Accessibility</a>
                             <span>·</span>
-                            <a href="Mission.html" class="info-link" style="color: var(--tx3); text-decoration: none;">Mission</a>
+                            <a href="Mission.html" class="info-link">Mission</a>
                             <span>·</span>
-                            <a href="Finance.html" class="info-link" style="color: var(--tx3); text-decoration: none;">Financial Literacy</a>
+                            <a href="Finance.html" class="info-link">Finance</a>
                             <span>·</span>
-                            <a href="Insights.html" class="info-link" style="color: var(--tx3); text-decoration: none;">Platform Insights</a>
+                            <a href="Insights.html" class="info-link">Insights</a>
                             <span>·</span>
-                            <a href="Changelog.html" class="info-link" style="color: var(--tx3); text-decoration: none;">Change Log</a>
+                            <a href="Changelog.html" class="info-link">Log</a>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- RIGHT: canvas left-aligned + detail panel fills remaining space -->
+                <div class="cv-panel" id="cvPanel">
+
+                    <!-- thin toolbar spanning full width -->
+                    <div class="cv-bar">
+                        <div class="cv-left">
+                            <div class="snap-pill"><div class="snap-dot"></div>Snap</div>
+                            <div class="cat-tag" id="catTag">—</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div class="timer-badge" id="timerBadge" style="display:none">—</div>
+                            <div class="coord-box" id="coordBox" aria-live="polite" aria-atomic="true">( — , — )</div>
+                        </div>
+                    </div>
+
+                    <!-- body: square canvas | detail panel -->
+                    <div class="cv-body">
+
+                        <!-- canvas wrapper: sized to a square by JS -->
+                        <div class="cv-wrap" id="cvWrap">
+                            <canvas id="gc" tabindex="0" aria-label="Interactive coordinate graphing grid. Use arrow keys to navigate and Space or Enter to place a point."></canvas>
+                            <div class="conf-ov" id="confOv">
+                                <div class="conf-coord" id="confCoord">(0,0)</div>
+                                <div class="conf-sub">Place this point?</div>
+                                <div class="conf-btns">
+                                    <button class="cb cb-no" id="confNo">Cancel</button>
+                                    <button class="cb cb-yes" id="confYes">✓ Place</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- detail panel: zoom view (default) ↔ solution view (after submit) -->
+                        <div class="detail-panel" id="detailPanel">
+
+                            <!-- ZOOM VIEW: live coordinate magnifier -->
+                            <div class="dp-section" id="dpZoom">
+                                <div class="dp-header">
+                                    <span class="dp-icon">🔍</span>
+                                    <span class="dp-title">Point Detail</span>
+                                    <span class="dp-badge" id="dpBadge"></span>
+                                </div>
+                                <div class="dp-empty" id="dpEmpty">Click the grid to place a point — details appear here.</div>
+                                <div class="dp-zoom-list" id="dpZoomList"></div>
+                                <div class="dp-axis-info" id="dpAxisInfo" style="display:none">
+                                    <div class="dp-axis-row"><span class="dp-axis-label">Quadrant</span><span class="dp-axis-val" id="dpQuad">—</span></div>
+                                    <div class="dp-axis-row"><span class="dp-axis-label">From Origin</span><span class="dp-axis-val" id="dpDist">—</span></div>
+                                </div>
+                            </div>
+
+                            <!-- SOLUTION VIEW: inline (replaces floating modal) -->
+                            <div class="dp-section dp-solution" id="dpSolution" style="display:none">
+                                <div class="dp-sol-result" id="dpSolResult">
+                                    <div class="dp-sol-icon" id="dpSolIcon">✓</div>
+                                    <div>
+                                        <div class="dp-sol-title" id="dpSolTitle">Correct!</div>
+                                        <div class="dp-sol-sub" id="dpSolSub"></div>
+                                    </div>
+                                </div>
+                                <div class="dp-sol-formula" id="dpSolFormula" style="display:none"></div>
+                                <div class="dp-sol-steps" id="dpSolSteps"></div>
+                                <div class="dp-sol-insight" id="dpSolInsight" style="display:none">
+                                    <span class="dp-sol-insight-ico">💡</span>
+                                    <span id="dpSolInsightText"></span>
+                                </div>
+                                <div class="dp-sol-actions">
+                                    <button class="dp-sol-next" id="dpSolNext">Next Question →</button>
+                                </div>
+                            </div>
+
+                        </div><!-- /detail-panel -->
+                    </div><!-- /cv-body -->
+                </div><!-- /cv-panel -->
+
+
+            </div><!-- /app-body -->
+
+            <!-- Done screen (overlays studentView) -->
             <div class="done-screen" id="doneScreen">
                 <div class="done-ico">🎉</div>
                 <div class="done-title">Set Complete!</div>
@@ -149,9 +228,13 @@
                 </div>
                 <button class="btn btn-acc" style="max-width:200px" id="restartBtn">Try Again</button>
             </div>
-            <div class="test-results" id="testResults"></div>
-        </div>
 
+            <!-- Test results (overlays studentView) -->
+            <div class="test-results" id="testResults"></div>
+
+        </div><!-- /studentView -->
+
+        <!-- Dashboard: full-screen overlay -->
         <div class="dash" id="dashView">
             <div class="dash-layout">
                 <div class="dash-sidebar">
@@ -171,6 +254,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- NEW ROOM MODAL -->
     <div class="modal-bg" id="newRoomModal" role="dialog" aria-modal="true" aria-labelledby="newRoomTitle" tabindex="-1">

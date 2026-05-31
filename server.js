@@ -261,7 +261,11 @@ app.post('/api/challenges/:id/submit', optionalAuth, [
                 });
             }
         }
-        res.json({ ...result, explanation: ch.explanation });
+        const lineGuide = (ch.mode === 'line' && ch.answer)
+            ? (() => { const p = ch.answer.split(':'); return { m: parseFloat(p[1]), b: parseFloat(p[2]) }; })()
+            : null;
+        res.json({ ...result, explanation: ch.explanation, ...(lineGuide ? { lineGuide } : {}) });
+
     } catch (err) { console.error(err); res.status(500).json({ error: 'Submission failed' }); }
 });
 

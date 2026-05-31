@@ -658,15 +658,18 @@ const DPR = window.devicePixelRatio || 1;
 
 function resizeCanvas() {
     const panel = document.getElementById('cvPanel');
-    const w = panel.clientWidth;
-    const bar = panel.querySelector('.cv-bar');
-    const barH = bar ? bar.offsetHeight : 38;
-    const h = panel.clientHeight - barH - 2; // Subtract border heights
-    canvas.width = Math.round(w * DPR); canvas.height = Math.round(h * DPR);
-    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    const bar   = panel.querySelector('.cv-bar');
+    const barH  = bar ? bar.offsetHeight : 38;
+    // Square canvas — constrained by available HEIGHT so detail panel keeps its width
+    const availH = panel.clientHeight - barH;
+    const size   = Math.max(100, availH);
+    canvas.width  = Math.round(size * DPR); canvas.height = Math.round(size * DPR);
+    canvas.style.width  = size + 'px'; canvas.style.height = size + 'px';
+    const wrap = document.getElementById('cvWrap');
+    if (wrap) { wrap.style.width = size + 'px'; wrap.style.height = size + 'px'; }
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(DPR, DPR);
-    CW = w; CH = h; OX = w / 2; OY = h / 2;
-    GRID = Math.max(28, Math.min(48, Math.floor(Math.min(w, h) / 16)));
+    CW = size; CH = size; OX = size / 2; OY = size / 2;
+    GRID = Math.max(24, Math.min(64, Math.floor(size / 18)));
     draw();
 }
 window.addEventListener('resize', () => { ctx.setTransform(1, 0, 0, 1, 0, 0); resizeCanvas(); });
@@ -881,10 +884,15 @@ function showConf(gx, gy, cx, cy) {
     const ov = document.getElementById('confOv');
     document.getElementById('confCoord').textContent = `(${gx}, ${gy})`;
     ov.classList.add('on');
-    const cr = canvas.getBoundingClientRect();
-    let L = cx * (cr.width / CW) + 16, T = cy * (cr.height / CH) - 75;
-    if (L + 192 > cr.width - 8) L = cx * (cr.width / CW) - 206;
-    if (T < 6) T = cy * (cr.height / CH) + 16;
+    // confOv is inside cvWrap (position:relative). cx/cy are canvas-local CSS pixels.
+    // Clamp so the popup (192×~80px) always stays fully inside the canvas.
+    const OW = 196, OH = 84;
+    let L = cx + 16;
+    let T = cy - OH - 8;
+    if (L + OW > CW) L = cx - OW - 8;
+    if (L < 4) L = 4;
+    if (T < 4) T = cy + 16;
+    if (T + OH > CH) T = CH - OH - 4;
     ov.style.left = L + 'px'; ov.style.top = T + 'px';
 }
 function hideConf() { document.getElementById('confOv').classList.remove('on'); pendingPt = null; draw(); }
@@ -893,7 +901,7 @@ function hideConf() { document.getElementById('confOv').classList.remove('on'); 
 function renderPts(details) {
     const list = document.getElementById('ptList');
     document.getElementById('ptCount').textContent = placed.length + (placed.length !== 1 ? ' pts' : ' pt');
-    if (!placed.length) { list.innerHTML = '<div class="pt-empty">Click the graph to place a point</div>'; return; }
+    if (!placed.length) { list.innerHTML = '<div class="pt-empty">Click the graph to place a point</div>'; renderZoom(null); return; }
     list.innerHTML = '';
     placed.forEach(([gx, gy], i) => {
         const d = details?.[i];
@@ -907,8 +915,62 @@ function renderPts(details) {
     list.querySelectorAll('.pt-del').forEach(btn => {
         btn.addEventListener('click', () => delPt(parseInt(btn.dataset.index)));
     });
+    renderZoom(details);
 }
 function delPt(i) { if (submitted) return; placed.splice(i, 1); renderPts(); draw(); }
+
+// ── DETAIL PANEL: ZOOM VIEW ────────────────────────────────────────────────
+function getQuadrant(x, y) {
+    if (x > 0 && y > 0) return 'Quadrant I';
+    if (x < 0 && y > 0) return 'Quadrant II';
+    if (x < 0 && y < 0) return 'Quadrant III';
+    if (x > 0 && y < 0) return 'Quadrant IV';
+    if (x === 0 && y === 0) return 'Origin';
+    if (x === 0) return 'Y-axis';
+    return 'X-axis';
+}
+function renderZoom(details) {
+    const dpEmpty   = document.getElementById('dpEmpty');
+    const dpList    = document.getElementById('dpZoomList');
+    const dpAxis    = document.getElementById('dpAxisInfo');
+    const dpBadge   = document.getElementById('dpBadge');
+    const dpQuad    = document.getElementById('dpQuad');
+    const dpDist    = document.getElementById('dpDist');
+    if (!dpEmpty) return;
+    if (!placed.length) {
+        dpEmpty.style.display = 'block';
+        dpList.innerHTML = '';
+        dpAxis.style.display = 'none';
+        dpBadge.textContent = '';
+        return;
+    }
+    dpEmpty.style.display = 'none';
+    dpBadge.textContent = placed.length + (placed.length !== 1 ? ' pts' : ' pt');
+    dpList.innerHTML = '';
+    placed.forEach(([gx, gy], i) => {
+        const d = details?.[i];
+        const card = document.createElement('div');
+        const cls = d ? (d.hit ? ' ok' : ' no') : '';
+        card.className = 'dp-zoom-card' + cls;
+        const dist = Math.sqrt(gx * gx + gy * gy).toFixed(2);
+        const quad = getQuadrant(gx, gy);
+        const sign = x => x >= 0 ? `+${x}` : `${x}`;
+        card.innerHTML = `
+          <div class="dp-zoom-coord">(${gx}, ${gy})</div>
+          <div class="dp-zoom-meta">
+            <span class="dp-zoom-tag">${quad}</span>
+            <span class="dp-zoom-tag">x ${sign(gx)}</span>
+            <span class="dp-zoom-tag">y ${sign(gy)}</span>
+            ${d ? `<span class="dp-zoom-tag" style="color:${d.hit ? 'var(--grn)' : 'var(--red)'}">${d.hit ? '✓ Correct' : '✗ Wrong'}</span>` : ''}
+          </div>`;
+        dpList.appendChild(card);
+    });
+    // Show axis info for last placed point
+    const [lx, ly] = placed[placed.length - 1];
+    dpAxis.style.display = 'flex';
+    dpQuad.textContent = getQuadrant(lx, ly);
+    dpDist.textContent = Math.sqrt(lx * lx + ly * ly).toFixed(2) + ' units';
+}
 
 // ── CHALLENGE ──────────────────────────────────────────────────────────────────
 function curChallenge() { return appMode === 'test' ? testChallenges[currentQ] : challenges[currentQ]; }
@@ -940,7 +1002,11 @@ function loadChallenge() {
     document.getElementById('expEmpty').style.display = 'block';
     document.getElementById('expBody').style.display = 'none';
     document.getElementById('expTitle').textContent = 'Step-by-step solution';
-    renderPts(); draw();
+    // Reset detail panel to zoom view for new question
+    document.getElementById('dpSolution').style.display = 'none';
+    document.getElementById('dpZoom').style.display = 'flex';
+    renderPts(); // resets sidebar point list + calls renderZoom(null)
+    resizeCanvas(); // ensures canvas is correctly sized, calls draw()
 }
 
 // ── SUBMIT ─────────────────────────────────────────────────────────────────────
@@ -956,7 +1022,13 @@ async function doSubmit() {
         needPts = q.requiredPoints;
     }
 
-    if (placed.length < needPts) { showRes('err', '✗', 'Not enough points', `Place ${needPts} point(s) to answer.`); return; }
+    if (placed.length < needPts) {
+        showRes('err', '✗', 'Not enough points', `Place ${needPts} point${needPts !== 1 ? 's' : ''} on the grid first.`);
+        // Also flash the detail panel badge so it's visible even if sidebar is scrolled
+        const badge = document.getElementById('dpBadge');
+        if (badge) { badge.textContent = `Need ${needPts} pts`; badge.style.background = 'var(--red)'; setTimeout(() => { badge.style.background = ''; renderZoom(null); }, 2000); }
+        return;
+    }
     let result;
     try {
         if (appMode === 'practice') {
@@ -969,6 +1041,7 @@ async function doSubmit() {
             if (result.error) throw new Error(result.error);
         } else {
             if (me && testSession) {
+                // Signed-in with server session: save answer to server
                 const r = await fetch(`${API}/api/test/${testSession._id}/answer`, {
                     method: 'POST', credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
@@ -980,7 +1053,15 @@ async function doSubmit() {
                 if (result.testComplete) { await finalizeTest(); return; }
                 result = result.result;
             } else {
-                showRes('err', '✗', 'Not signed in', 'Please sign in or set a name in your Profile to take a test.'); return;
+                // Guest / no session: validate via practice endpoint, store locally
+                const r = await fetch(`${API}/api/challenges/${q.id}/submit`, {
+                    method: 'POST', credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ points: placed, classroomId: null })
+                });
+                result = await r.json();
+                if (result.error) throw new Error(result.error);
+                testAnswers[q.id] = { score: result.score, correct: result.correct, points: placed };
             }
         }
     } catch (e) {
@@ -994,11 +1075,7 @@ async function doSubmit() {
     document.getElementById('scoreVal').textContent = score;
     lastSubmitDetails = result.details || [];
     lastSubmitMode = q.mode;
-    lastLineGuide = null;
-    if (q.mode === 'line') {
-        const parts = q.answer.split(':');
-        lastLineGuide = { m: parseFloat(parts[1]), b: parseFloat(parts[2]) };
-    }
+    lastLineGuide = result.lineGuide || null;
     renderPts(lastSubmitDetails); draw();
     showSolutionModal(result);
 }
@@ -1030,95 +1107,79 @@ function getStudentFeedback(isCorrect, score) {
 }
 
 function showSolutionModal(res) {
-    const backdrop = document.getElementById('solBackdrop');
-    const badge = document.getElementById('solResultBadge');
-    const icon = document.getElementById('solResultIcon');
-    const title = document.getElementById('solResultTitle');
-    const sub = document.getElementById('solResultSub');
-    const nextBtn = document.getElementById('solNext');
+    // Populate inline detail panel — no floating modal
+    const icon  = document.getElementById('dpSolIcon');
+    const title = document.getElementById('dpSolTitle');
+    const sub   = document.getElementById('dpSolSub');
+    const next  = document.getElementById('dpSolNext');
 
-    badge.className = 'sol-result-badge';
-    icon.className = 'sol-result-icon';
-
-    sub.style.fontFamily = "var(--fn)";
-    sub.style.fontSize = "13px";
-    sub.style.color = "var(--tx2)";
-    sub.style.lineHeight = "1.4";
-    sub.style.marginTop = "4px";
-
+    icon.className = 'dp-sol-icon';
     if (res.correct) {
         title.textContent = 'Correct!';
-        sub.textContent = getStudentFeedback(true, res.score) + ` (+${res.score} pts)`;
-        icon.textContent = '✓';
+        sub.textContent   = getStudentFeedback(true, res.score) + ` (+${res.score} pts)`;
+        icon.textContent  = '\u2713';
         icon.classList.add('ok');
     } else if (res.score > 0) {
         title.textContent = 'Partially Correct';
-        sub.textContent = getStudentFeedback(false, res.score) + ` (${res.score}% correct · +${res.score} pts)`;
-        icon.textContent = '⚠';
+        sub.textContent   = getStudentFeedback(false, res.score) + ` (${res.score}% · +${res.score} pts)`;
+        icon.textContent  = '\u26a0';
         icon.classList.add('part');
     } else {
         title.textContent = 'Incorrect';
-        sub.textContent = getStudentFeedback(false, 0) + ' (No points awarded)';
-        icon.textContent = '✗';
+        sub.textContent   = getStudentFeedback(false, 0) + ' (No points awarded)';
+        icon.textContent  = '\u2717';
         icon.classList.add('err');
     }
 
-    const q = curChallenge();
     const exp = res.explanation;
     if (exp) {
-        document.getElementById('solExpTitle').textContent = exp.title || 'Step-by-step solution';
-        if (exp.formula) {
-            const f = document.getElementById('solFormula');
-            f.textContent = exp.formula; f.style.display = 'block';
-        } else {
-            document.getElementById('solFormula').style.display = 'none';
-        }
-        const container = document.getElementById('solSteps');
-        container.innerHTML = '';
+        const formula = document.getElementById('dpSolFormula');
+        if (exp.formula) { formula.textContent = exp.formula; formula.style.display = 'block'; }
+        else { formula.style.display = 'none'; }
+
+        const stepsEl = document.getElementById('dpSolSteps');
+        stepsEl.innerHTML = '';
         if (exp.steps && exp.steps.length) {
             exp.steps.forEach((s, idx) => {
                 const row = document.createElement('div');
-                row.className = 'sol-step';
-                row.style.animationDelay = (idx * 0.08) + 's';
-                row.innerHTML = `<div class="sol-step-num">${idx + 1}</div>
-          <div>
-            <div class="sol-step-lbl">${s.label}</div>
-            <div class="sol-step-det">${s.detail}</div>
-          </div>`;
-                container.appendChild(row);
+                row.className = 'dp-sol-step';
+                row.style.animationDelay = (idx * 0.07) + 's';
+                row.innerHTML = `<div class="dp-sol-step-num">${idx + 1}</div>
+                  <div><div class="dp-sol-step-lbl">${s.label}</div><div class="dp-sol-step-det">${s.detail}</div></div>`;
+                stepsEl.appendChild(row);
             });
         }
+        const insight = document.getElementById('dpSolInsight');
         if (exp.keyInsight) {
-            document.getElementById('solInsightText').innerHTML = `<strong>Key Insight:</strong> ${exp.keyInsight}`;
-            document.getElementById('solInsight').style.display = 'flex';
-        } else {
-            document.getElementById('solInsight').style.display = 'none';
-        }
+            document.getElementById('dpSolInsightText').innerHTML = `<strong>Key Insight:</strong> ${exp.keyInsight}`;
+            insight.style.display = 'flex';
+        } else { insight.style.display = 'none'; }
     }
 
     const total = appMode === 'test' ? testChallenges.length : challenges.length;
     if (currentQ >= total - 1) {
-        nextBtn.textContent = appMode === 'test' ? 'Finish Test' : 'Show Set Summary';
-        nextBtn.classList.add('last');
+        next.textContent = appMode === 'test' ? 'Finish Test' : 'Show Summary';
+        next.classList.add('last');
     } else {
-        nextBtn.textContent = 'Next Question →';
-        nextBtn.classList.remove('last');
+        next.textContent = 'Next Question \u2192';
+        next.classList.remove('last');
     }
 
-    backdrop.classList.add('on');
-    const modal = document.getElementById('solModal');
-    modal.focus();
-    trapFocus(modal);
+    // Switch detail panel to solution view
+    document.getElementById('dpZoom').style.display     = 'none';
+    document.getElementById('dpSolution').style.display = 'flex';
+    document.getElementById('detailPanel').scrollTop    = 0;
 }
 
 function dismissSolutionModal() {
-    document.getElementById('solBackdrop').classList.remove('on');
-    const submitBtn = document.getElementById('submitBtn');
-    if (submitBtn) submitBtn.focus();
+    // Return to zoom view
+    document.getElementById('dpSolution').style.display = 'none';
+    document.getElementById('dpZoom').style.display     = 'flex';
 
     const total = appMode === 'test' ? testChallenges.length : challenges.length;
     if (currentQ >= total - 1) {
         if (appMode === 'practice') showDone();
+        else if (appMode === 'test') finalizeTest();
     } else {
         currentQ++; submitted = false; placed = []; lastSubmitDetails = []; lastLineGuide = null;
         document.getElementById('resArea').innerHTML = ''; loadChallenge();
@@ -1137,7 +1198,6 @@ function showRes(style, sym, title, msg) {
 }
 
 function showDone() {
-    document.getElementById('appBody').style.display = 'none';
     document.getElementById('doneScreen').classList.add('on');
     document.getElementById('doneScore').textContent = score;
     const total = challenges.length;
@@ -1149,18 +1209,17 @@ function restartPractice() {
     document.getElementById('scoreVal').textContent = '0';
     document.getElementById('resArea').innerHTML = '';
     document.getElementById('doneScreen').classList.remove('on');
-    document.getElementById('appBody').style.display = '';
     loadChallenge();
 }
 
 // ── TEST SESSION ──────────────────────────────────────────────────────────────
 async function finalizeTest() {
-    if (!testSession) return;
-    try {
-        await fetch(`${API}/api/test/${testSession._id}/finalize`, { method: 'POST', credentials: 'include' });
-    } catch (_) { }
-    document.getElementById('appBody').style.display = 'none';
-    document.getElementById('testProgressCard').style.display = 'none';
+    if (testSession?._id) {
+        try {
+            await fetch(`${API}/api/test/${testSession._id}/finalize`, { method: 'POST', credentials: 'include' });
+        } catch (_) { }
+    }
+    // testResults is position:absolute over studentView — no need to hide appBody
     const tr = document.getElementById('testResults');
     tr.classList.add('on');
     const total = testChallenges.length;
@@ -1326,44 +1385,47 @@ async function checkSession() {
 async function setMode(mode) {
     if (mode === appMode) return;
     if (mode === 'test') {
-        if (!me) { showRes('err', '✗', 'Practice Only', 'Please sign in or set a display name in your profile Settings to take tests.'); return; }
-        if (confirm('Start new test? This will reset your current practice question progress.')) {
-            // Re-fetch start session
+        if (confirm('Start a test? This will reset your current practice progress.')) {
             try {
-                const r = await fetch(`${API}/api/test/start`, { method: 'POST', credentials: 'include' });
-                const data = await r.json();
-                if (data && data.challenges) {
-                    appMode = 'test';
-                    testSession = data.session || data;
-                    testChallenges = data.challenges;
-                    testAnswers = {};
-                    
-                    const sess = data.session || data;
-                    if (sess.answers) {
-                        Object.keys(sess.answers).forEach(chId => {
-                            const ans = sess.answers[chId];
-                            testAnswers[chId] = { score: ans.score, correct: ans.correct, points: ans.points };
-                        });
-                        const unansweredIdx = data.challenges.findIndex(c => !testAnswers[c.id]);
-                        currentQ = unansweredIdx !== -1 ? unansweredIdx : 0;
-                    } else {
-                        currentQ = 0;
-                    }
-                    score = Object.values(testAnswers).reduce((sum, a) => sum + a.score, 0);
-                    correctCt = Object.values(testAnswers).filter(a => a.correct).length;
-                    submitted = false; placed = []; lastSubmitDetails = []; lastLineGuide = null;
-                    document.getElementById('scoreVal').textContent = score;
-                    document.getElementById('btnPractice').classList.remove('on');
-                    document.getElementById('btnTest').classList.add('on');
-                    document.getElementById('resArea').innerHTML = '';
-                    loadChallenge();
+                let testData = null;
+                if (me) {
+                    // Signed-in: use server test session
+                    const r = await fetch(`${API}/api/test/start`, { method: 'POST', credentials: 'include' });
+                    testData = await r.json();
                 }
+                // Guest or server fallback: build local test from practice challenges
+                if (!testData || !testData.challenges) {
+                    testData = { challenges, session: null };
+                }
+                appMode = 'test';
+                testSession = testData.session || null;
+                testChallenges = testData.challenges;
+                testAnswers = {};
+                const sess = testData.session;
+                if (sess && sess.answers) {
+                    Object.keys(sess.answers).forEach(chId => {
+                        const ans = sess.answers[chId];
+                        testAnswers[chId] = { score: ans.score, correct: ans.correct, points: ans.points };
+                    });
+                    const unansweredIdx = testData.challenges.findIndex(c => !testAnswers[c.id]);
+                    currentQ = unansweredIdx !== -1 ? unansweredIdx : 0;
+                } else {
+                    currentQ = 0;
+                }
+                score = Object.values(testAnswers).reduce((sum, a) => sum + a.score, 0);
+                correctCt = Object.values(testAnswers).filter(a => a.correct).length;
+                submitted = false; placed = []; lastSubmitDetails = []; lastLineGuide = null;
+                document.getElementById('scoreVal').textContent = score;
+                document.getElementById('btnPractice').classList.remove('on');
+                document.getElementById('btnTest').classList.add('on');
+                document.getElementById('resArea').innerHTML = '';
+                loadChallenge();
             } catch (err) {
-                alert('Could not start test. ' + err.message);
+                alert('Could not start test: ' + err.message);
             }
         }
     } else {
-        if (confirm('Return to Practice? Any test progress will be lost.')) {
+        if (confirm('Return to Practice? Test progress will be lost.')) {
             exitTest();
         }
     }
@@ -1371,11 +1433,10 @@ async function setMode(mode) {
 
 // ── DASHBOARD ──────────────────────────────────────────────────────────────────
 function toggleDash() {
-    const isDash = document.getElementById('dashView').style.display === 'flex';
-    document.getElementById('dashView').style.display = isDash ? 'none' : 'flex';
-    document.getElementById('studentView').style.display = isDash ? 'flex' : 'none';
-    document.getElementById('dashToggleBtn').textContent = isDash ? 'Dashboard' : 'Exit Dashboard';
-    if (!isDash) loadDash();
+    const dash = document.getElementById('dashView');
+    const isOpen = dash.classList.toggle('on');
+    document.getElementById('dashToggleBtn').textContent = isOpen ? 'Exit Dashboard' : 'Dashboard';
+    if (isOpen) loadDash();
 }
 
 async function loadDash() {
@@ -1575,13 +1636,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('dashToggleBtn').addEventListener('click', toggleDash);
     document.getElementById('userChip').addEventListener('click', openProfileModal);
 
-    // Profile Settings modal triggers
+    // Profile settings modal
     document.getElementById('profRoleStudent').addEventListener('click', () => profPickRole('student'));
     document.getElementById('profRoleInstructor').addEventListener('click', () => profPickRole('instructor'));
     document.getElementById('cancelProfileBtn').addEventListener('click', closeProfileModal);
     document.getElementById('saveProfileBtn').addEventListener('click', saveProfileSettings);
 
-    // Classroom modals triggers
+    // New classroom modal
     document.getElementById('newRoomBtn').addEventListener('click', () => {
         const m = document.getElementById('newRoomModal');
         m.classList.add('on');
@@ -1593,7 +1654,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = document.getElementById('newRoomName').value.trim();
         if (!name) return;
         const desc = document.getElementById('newRoomDesc').value.trim();
-        
         try {
             await fetch('/api/classrooms', {
                 method: 'POST',
@@ -1607,18 +1667,17 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) { }
     });
 
+    // Join classroom modal
     document.getElementById('cancelJoinBtn').addEventListener('click', () => document.getElementById('joinModal').classList.remove('on'));
     document.getElementById('confirmJoinBtn').addEventListener('click', async () => {
         const code = document.getElementById('joinCodeInput').value.trim();
         if (!code) return;
-        
         try {
             const r = await (await fetch('/api/classrooms/join', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ joinCode: code })
             })).json();
-            
             if (r?.error) {
                 document.getElementById('joinErr').textContent = r.error;
                 document.getElementById('joinErr').style.display = 'block'; return;
@@ -1629,26 +1688,22 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) { }
     });
 
+    // Point confirm overlay
     document.getElementById('confNo').addEventListener('click', hideConf);
     document.getElementById('confYes').addEventListener('click', () => {
         if (!pendingPt) return; placed.push(pendingPt); hideConf(); renderPts(); draw();
     });
-    document.getElementById('solClose').addEventListener('click', dismissSolutionModal);
-    document.getElementById('solDismiss').addEventListener('click', dismissSolutionModal);
-    document.getElementById('solNext').addEventListener('click', dismissSolutionModal);
 
-    // Escape Key Listener to dismiss modals cleanly
+    // Inline solution panel — next/dismiss button
+    document.getElementById('dpSolNext').addEventListener('click', dismissSolutionModal);
+
+    // Escape Key: dismiss any open modal-bg
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
-            const activeModal = document.querySelector('.modal-bg.on, .sol-backdrop.on');
+            const activeModal = document.querySelector('.modal-bg.on');
             if (activeModal) {
-                if (activeModal.id === 'solBackdrop') {
-                    dismissSolutionModal();
-                } else if (activeModal.id === 'profileModal') {
-                    closeProfileModal();
-                } else {
-                    activeModal.classList.remove('on');
-                }
+                if (activeModal.id === 'profileModal') closeProfileModal();
+                else activeModal.classList.remove('on');
             }
         }
     });
