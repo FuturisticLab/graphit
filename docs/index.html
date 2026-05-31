@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="app.css?v=2.5.2">
+    <link rel="stylesheet" href="app.css?v=2.5.3">
     
 </head>
 <body>
@@ -53,6 +53,11 @@
     <div class="screen on" id="scrApp">
 
         <div id="studentView">
+            <div class="mobile-nav" id="mobileNav" style="display:none">
+                <button class="mn-btn on" id="mnBtnProblem">Problem</button>
+                <button class="mn-btn" id="mnBtnGraph">Graph</button>
+                <button class="mn-btn" id="mnBtnSolution">Solution</button>
+            </div>
             <div class="app-body" id="appBody">
 
                 <!-- LEFT SIDEBAR: branding + controls + challenge info -->
@@ -76,7 +81,6 @@
                         <div class="mode-toggle" id="modeToggle">
                             <button class="mt-btn on" id="btnPractice">Practice</button>
                             <button class="mt-btn" id="btnTest">Test</button>
-                            <button class="mt-btn" id="btnGoGraph" style="display:none">Graph</button>
                         </div>
                     </div>
 
@@ -147,7 +151,6 @@
                     <!-- thin toolbar spanning full width -->
                     <div class="cv-bar">
                         <div class="cv-left">
-                            <button class="mt-btn" id="btnGoProblem" style="display:none; margin-right:8px; background:var(--s3); padding:4px 10px; border-radius:999px;">← Problem</button>
                             <div class="snap-pill"><div class="snap-dot"></div>Snap</div>
                             <div class="cat-tag" id="catTag">—</div>
                         </div>
@@ -348,6 +351,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=2.5.2"></script>
+    <script src="app.js?v=2.5.3"></script>
 </body>
 </html>

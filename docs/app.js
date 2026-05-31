@@ -1343,6 +1343,31 @@ async function saveProfileSettings() {
     }
 }
 
+let currentMobileTab = 'problem';
+function setMobileTab(tab) {
+    currentMobileTab = tab;
+    const body = document.getElementById('appBody');
+    if (!body) return;
+    body.classList.remove('mob-show-problem', 'mob-show-graph', 'mob-show-solution');
+    body.classList.add('mob-show-' + tab);
+    
+    const btns = {
+        problem: document.getElementById('mnBtnProblem'),
+        graph: document.getElementById('mnBtnGraph'),
+        solution: document.getElementById('mnBtnSolution')
+    };
+    
+    Object.keys(btns).forEach(k => {
+        if (btns[k]) btns[k].classList.remove('on');
+    });
+    
+    if (btns[tab]) btns[tab].classList.add('on');
+    
+    if (tab === 'graph') {
+        resizeCanvas();
+    }
+}
+
 // ── START ──────────────────────────────────────────────────────────────────────
 async function startApp() {
     const r = await fetch('/api/challenges');
@@ -1354,8 +1379,7 @@ async function startApp() {
     }
     
     document.getElementById('scrApp').classList.add('on');
-    const appBody = document.getElementById('appBody');
-    if (appBody) appBody.classList.add('mob-show-problem');
+    setMobileTab('problem');
     const name = me?.displayName || 'Guest';
     document.getElementById('uName').textContent = name;
     document.getElementById('uAvatar').textContent = name[0].toUpperCase();
@@ -1720,27 +1744,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Mobile navigation tab listeners
-    const btnGoGraph = document.getElementById('btnGoGraph');
-    const btnGoProblem = document.getElementById('btnGoProblem');
-    if (btnGoGraph) {
-        btnGoGraph.addEventListener('click', () => {
-            const body = document.getElementById('appBody');
-            if (body) {
-                body.classList.remove('mob-show-problem');
-                body.classList.add('mob-show-graph');
-                resizeCanvas();
-            }
-        });
-    }
-    if (btnGoProblem) {
-        btnGoProblem.addEventListener('click', () => {
-            const body = document.getElementById('appBody');
-            if (body) {
-                body.classList.remove('mob-show-graph');
-                body.classList.add('mob-show-problem');
-            }
-        });
-    }
+    const mnBtnProblem = document.getElementById('mnBtnProblem');
+    const mnBtnGraph = document.getElementById('mnBtnGraph');
+    const mnBtnSolution = document.getElementById('mnBtnSolution');
+    if (mnBtnProblem) mnBtnProblem.addEventListener('click', () => setMobileTab('problem'));
+    if (mnBtnGraph) mnBtnGraph.addEventListener('click', () => setMobileTab('graph'));
+    if (mnBtnSolution) mnBtnSolution.addEventListener('click', () => setMobileTab('solution'));
 
     checkSession();
 });
