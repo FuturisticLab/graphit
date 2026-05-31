@@ -92,12 +92,23 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fn)
 .info-link:hover{color:var(--tx);}
 
 @media(max-width:820px){
-  .app-body{flex-direction:column;overflow-y:auto;}
-  .left-col{order:2;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--b1);overflow-y:visible;}
-  .cv-panel{order:1;height:auto;overflow:visible;}
-  .cv-body{flex:none;flex-direction:column;height:auto;overflow:visible;}
-  .cv-wrap{margin:0 auto;}
-  .detail-panel{border-left:none;border-top:1px solid var(--b1);height:auto;min-height:auto;width:100%;overflow-y:visible;}
+  /* Show mobile specific navigation buttons */
+  #btnGoGraph { display: inline-block !important; }
+  #btnGoProblem { display: inline-block !important; }
+
+  /* Tab toggling visibility rules */
+  .app-body.mob-show-graph .left-col { display: none !important; }
+  .app-body.mob-show-graph .cv-panel { display: flex !important; width: 100% !important; height: 100% !important; }
+  .app-body.mob-show-problem .left-col { display: flex !important; width: 100% !important; height: 100% !important; }
+  .app-body.mob-show-problem .cv-panel { display: none !important; }
+
+  /* Locked layout on mobile to enable independent scrolling in active tab */
+  .app-body{flex-direction:column; overflow:hidden; height:100%;}
+  .left-col{width:100%;height:100%;border-right:none;overflow-y:auto;flex-shrink:0;}
+  .cv-panel{width:100%;height:100%;overflow:hidden;flex-direction:column;display:flex;}
+  .cv-body{flex:1;flex-direction:column;height:calc(100% - 38px);overflow:hidden;}
+  .cv-wrap{margin:0 auto;flex-shrink:0;}
+  .detail-panel{border-left:none;border-top:1px solid var(--b1);flex:1;width:100%;overflow-y:auto;min-height:200px;}
 }
 
 .prog-bar{display:flex;gap:4px;}

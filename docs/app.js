@@ -1354,6 +1354,8 @@ async function startApp() {
     }
     
     document.getElementById('scrApp').classList.add('on');
+    const appBody = document.getElementById('appBody');
+    if (appBody) appBody.classList.add('mob-show-problem');
     const name = me?.displayName || 'Guest';
     document.getElementById('uName').textContent = name;
     document.getElementById('uAvatar').textContent = name[0].toUpperCase();
@@ -1716,6 +1718,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // Mobile navigation tab listeners
+    const btnGoGraph = document.getElementById('btnGoGraph');
+    const btnGoProblem = document.getElementById('btnGoProblem');
+    if (btnGoGraph) {
+        btnGoGraph.addEventListener('click', () => {
+            const body = document.getElementById('appBody');
+            if (body) {
+                body.classList.remove('mob-show-problem');
+                body.classList.add('mob-show-graph');
+                resizeCanvas();
+            }
+        });
+    }
+    if (btnGoProblem) {
+        btnGoProblem.addEventListener('click', () => {
+            const body = document.getElementById('appBody');
+            if (body) {
+                body.classList.remove('mob-show-graph');
+                body.classList.add('mob-show-problem');
+            }
+        });
+    }
 
     checkSession();
 });
