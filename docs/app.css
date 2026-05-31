@@ -92,6 +92,9 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fn)
 .info-link:hover{color:var(--tx);}
 
 @media(max-width:820px){
+  /* Vertical stack for navigation and body */
+  #studentView { flex-direction: column !important; }
+
   /* Persistent Mobile Navigation Bar */
   .mobile-nav {
     display: flex !important;
@@ -132,8 +135,6 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fn)
   /* Tab switching visibility rules */
   /* Tab 1: Show Problem */
   .app-body.mob-show-problem .left-col { display: flex !important; }
-  .app-body.mob-show-problem .left-col > * { display: block; }
-  .app-body.mob-show-problem .left-col .actions { display: flex; }
   .app-body.mob-show-problem .left-col #expPanel { display: none !important; } /* Hide solution card in problem tab */
   .app-body.mob-show-problem .cv-panel { display: none !important; }
 
@@ -143,7 +144,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fn)
 
   /* Tab 3: Show Solution */
   .app-body.mob-show-solution .left-col { display: flex !important; width: 100% !important; height: 100% !important; }
-  .app-body.mob-show-solution .left-col > * { display: none !important; } /* Hide other cards */
+  .app-body.mob-show-solution .left-col > *:not(#expPanel):not(#resArea) { display: none !important; } /* Hide other cards precisely */
   .app-body.mob-show-solution .left-col #expPanel { display: block !important; } /* Only show explanation card */
   .app-body.mob-show-solution .left-col #resArea { display: block !important; } /* Also show submission result badge */
   .app-body.mob-show-solution .cv-panel { display: none !important; }
