@@ -143,11 +143,10 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fn)
   .app-body.mob-show-graph .cv-panel { display: flex !important; width: 100% !important; height: 100% !important; }
 
   /* Tab 3: Show Solution */
-  .app-body.mob-show-solution .left-col { display: flex !important; width: 100% !important; height: 100% !important; }
-  .app-body.mob-show-solution .left-col > *:not(#expPanel):not(#resArea) { display: none !important; } /* Hide other cards precisely */
-  .app-body.mob-show-solution .left-col #expPanel { display: block !important; } /* Only show explanation card */
-  .app-body.mob-show-solution .left-col #resArea { display: block !important; } /* Also show submission result badge */
-  .app-body.mob-show-solution .cv-panel { display: none !important; }
+  .app-body.mob-show-solution .left-col { display: none !important; }
+  .app-body.mob-show-solution .cv-panel { display: flex !important; width: 100% !important; height: 100% !important; }
+  .app-body.mob-show-solution .cv-wrap { display: none !important; } /* Hide the graph wrapper on solution tab */
+  .app-body.mob-show-solution .detail-panel { border-left: none; border-top: none; flex: 1; width: 100%; overflow-y: auto; }
 
   /* Locked layout on mobile to enable independent scrolling in active tab */
   .app-body{flex-direction:column; overflow:hidden; height:calc(100% - 48px) !important;}

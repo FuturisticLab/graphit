@@ -1363,7 +1363,35 @@ function setMobileTab(tab) {
     
     if (btns[tab]) btns[tab].classList.add('on');
     
-    if (tab === 'graph') {
+    // Manage detail panel sub-views on mobile tabs
+    const solPl = document.getElementById('dpSolPlaceholder');
+    const solEl = document.getElementById('dpSolution');
+    const zoomEl = document.getElementById('dpZoom');
+    
+    if (solPl && solEl && zoomEl) {
+        if (tab === 'solution') {
+            zoomEl.style.display = 'none';
+            if (submitted) {
+                solPl.style.display = 'none';
+                solEl.style.display = 'flex';
+            } else {
+                solPl.style.display = 'block';
+                solEl.style.display = 'none';
+            }
+        } else if (tab === 'graph') {
+            solPl.style.display = 'none';
+            if (submitted) {
+                solEl.style.display = 'flex';
+                zoomEl.style.display = 'none';
+            } else {
+                solEl.style.display = 'none';
+                zoomEl.style.display = 'flex';
+            }
+            resizeCanvas();
+        } else {
+            solPl.style.display = 'none';
+        }
+    } else if (tab === 'graph') {
         resizeCanvas();
     }
 }
